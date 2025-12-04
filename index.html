@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz An Toàn Lao Động</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+        .card {
+            width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        img {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        .option {
+            padding: 12px;
+            margin: 6px 0;
+            border-radius: 8px;
+            background: #eee;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .option:hover { background: #ddd; }
+        .correct { background: #b3ffb3 !important; }
+        .wrong { background: #ffb3b3 !important; }
+        #nextBtn {
+            margin-top: 20px;
+            padding: 12px;
+            width: 100%;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            display: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2 id="question">Đang tải...</h2>
+    <img id="image" src="" alt="">
+    <div id="options"></div>
+    <button id="nextBtn" onclick="nextQuestion()">Tiếp tục</button>
+</div>
+
+<script>
+const questions = [
+{
+    "question": "Môi trường nào có khả năng lớn nhất cần phải đeo bịt tai?",
+    "image": "images/Cau1.jpg",
+    "options": [
+        "Sàn xưởng cơ khí — công nhân thực hiện cắt thủ công bằng dụng cụ cầm tay và tấm kim loại, không khí ồn ào náo nhiệt.",
+        "Nhà máy với máy CNC — xưởng hiện đại với các máy phay và tiện CNC đang hoạt động.",
+        "Dây chuyền máy tự động — dây chuyền băng chuyền hoàn toàn tự động với các cánh tay robot và thiết bị công nghiệp, tiếng ồn trung bình đến cao.",
+        "Trạm lắp ráp với robot — trạm lắp ráp tự động có một hoặc hai robot hỗ trợ sản xuất và tương đối yên tĩnh hơn so với các nơi khác."
+    ],
+    "correct": 0,
+    "feedback": [
+        "🎉 Chính xác! Dụng cụ cắt kim loại cầm loại cầm tay tạo ra tiếng ồn rất lớn và ở rất gần tai, dễ vượt ngưỡng an toàn → bắt buộc phải đeo bịt tai.",
+        "❌ Sai rồi. Máy CNC có vỏ chắn và hệ thống giảm ồn tốt, tiếng ồn ổn định nên thường thấp hơn so với cắt thủ công.",
+        "❌ Sai rồi. Dây chuyền tự động ồn nhưng tiếng ồn phân tán, không tập trung mạnh như dụng cụ cắt kim loại cầm tay.",
+        "❌ Sai rồi. Robot lắp ráp vận hành êm và có cách âm tốt, mức ồn thấp hơn nhiều so so với hoạt động cắt kim loại thủ công."
+    ]
+},
+{
+    "question": "Trong các thiết bị dưới đây, đâu không phải là PPE?",
+    "image": "images/Cau2.jpg",
+    "options": [
+        "Tai nghe xanh",
+        "Mũ",
+        "Kính và tai nghe đen",
+        "Khẩu trang"
+    ],
+    "correct": 2,
+    "feedback": [
+        "❌ Sai rồi. Tai nghe xanh là PPE.",
+        "❌ Sai rồi. Mũ bảo hộ là PPE.",
+        "🎉 Chính xác! Bộ kính và tai nghe đen không phải PPE tiêu chuẩn.",
+        "❌ Sai rồi. Khẩu trang là PPE."
+    ]
+},
+{
+    "question": "Những nguyên nhân nào dẫn đến việc ngã thang xếp?",
+    "image": "images/Cau3.png",
+    "options": [
+        "Không đeo dây bảo hộ và đặt thang không đúng nơi quy định",
+        "Không đeo kính chống hồ quang và mặc áo chống lửa",
+        "Không khóa thanh giằng kim loại khiến thang mất ổn định",
+        "Không mang vật quá nặng"
+    ],
+    "correct": 2,
+    "feedback": [
+        "❌ Sai rồi. Nền trơn trượt không phải nguyên nhân trực tiếp.",
+        "❌ Sai rồi. Leo bậc cao nhất không phải nguyên nhân trực tiếp.",
+        "🎉 Chính xác! Không khóa thanh giằng kim loại khiến thang mất ổn định.",
+        "❌ Sai rồi. Vật nặng không phải nguyên nhân trực tiếp."
+    ]
+},
+{
+    "question": "Thiết bị PPE nào bắt buộc khi làm việc với máy hàn hồ quang?",
+    "image": "images/Cau4.jpg",
+    "options": [
+        "Mũ cứng",
+        "Kính hàn và găng tay vải",
+        "Áo khoác chống cháy",
+        "Mặt nạ phòng độc"
+    ],
+    "correct": 1,
+    "feedback": [
+        "❌ Sai rồi. Mũ cứng không bảo vệ mắt và mặt.",
+        "🎉 Chính xác! Kính hàn và găng tay vải bảo vệ mắt và tay khỏi tia UV/IR.",
+        "❌ Sai rồi. Áo khoác chống cháy chỉ bảo vệ da.",
+        "❌ Sai rồi. Mặt nạ không bảo vệ mắt khi hàn."
+    ]
+},
+{
+    "question": "Tình huống nào ít có khả năng gây ra vấp ngã nhất?",
+    "image": "images/Cau5.jpg",
+    "options": [
+        "Dây điện kéo dài không cố định",
+        "Lối đi thông thoáng, chiếu sáng tốt",
+        "Thảm lót sàn bị cuộn góc",
+        "Hộp carton chất đống trong lối đi"
+    ],
+    "correct": 1,
+    "feedback": [
+        "❌ Sai rồi. Dây điện tạo chướng ngại vật.",
+        "🎉 Chính xác! Lối đi thông thoáng và chiếu sáng tốt giảm nguy cơ vấp ngã.",
+        "❌ Sai rồi. Thảm lót sàn cuộn góc là mối nguy hiểm.",
+        "❌ Sai rồi. Hộp carton chất đống gây nguy cơ vấp ngã."
+    ]
+},
+{
+    "question": "Mối nguy hiểm hàng đầu khi làm việc trên giàn giáo là gì?",
+    "image": "images/Cau6.jpg",
+    "options": [
+        "Nguy cơ ngã từ độ cao",
+        "Nguy cơ điện giật",
+        "Nguy cơ vật liệu rơi",
+        "Nguy cơ sập giàn giáo"
+    ],
+    "correct": 0,
+    "feedback": [
+        "🎉 Chính xác! Ngã từ độ cao là mối nguy hiểm phổ biến nhất.",
+        "❌ Sai rồi. Nguy cơ điện giật ít phổ biến hơn.",
+        "❌ Sai rồi. Vật liệu rơi ảnh hưởng người khác.",
+        "❌ Sai rồi. Sập giàn giáo ít phổ biến hơn."
+    ]
+},
+{
+    "question": "Khi làm việc ở môi trường lạnh, PPE nào quan trọng nhất?",
+    "image": "images/Cau7.jpg",
+    "options": [
+        "Áo khoác chống lạnh",
+        "Áo phản quang",
+        "Áo mưa",
+        "Áo khoác thông thường"
+    ],
+    "correct": 0,
+    "feedback": [
+        "🎉 Chính xác! Áo khoác chống lạnh giữ nhiệt cơ thể hiệu quả.",
+        "❌ Sai rồi. Áo phản quang tăng khả năng nhìn thấy, không giữ nhiệt.",
+        "❌ Sai rồi. Áo mưa chống thấm, không giữ nhiệt.",
+        "❌ Sai rồi. Áo khoác thông thường không đủ cách nhiệt."
+    ]
+},
+{
+    "question": "Mối nguy hiểm chính khi làm việc gần đường dây điện?",
+    "image": "images/Cau8.jpg",
+    "options": [
+        "Giảm tầm nhìn",
+        "Nguy cơ điện giật",
+        "Giàn giáo sập",
+        "Tiếng ồn quá mức"
+    ],
+    "correct": 1,
+    "feedback": [
+        "❌ Sai rồi. Giảm tầm nhìn không nguy hiểm chính.",
+        "🎉 Chính xác! Nguy cơ điện giật do tiếp xúc trực tiếp hoặc hồ quang.",
+        "❌ Sai rồi. Giàn giáo không sập trực tiếp vì điện.",
+        "❌ Sai rồi. Tiếng ồn không quan trọng."
+    ]
+},
+{
+    "question": "Khi vật liệu được nâng bằng cần cẩu, người lao động KHÔNG được phép làm gì?",
+    "image": "images/Cau9.jpg",
+    "options": [
+        "Kích hoạt thiết bị báo động",
+        "Đứng ngoài phạm vi rơi",
+        "Đi bộ/đứng dưới tải trọng nâng",
+        "Duy trì liên lạc với người điều khiển cẩu"
+    ],
+    "correct": 2,
+    "feedback": [
+        "❌ Sai rồi. Kích hoạt báo động là NÊN làm.",
+        "❌ Sai rồi. Đứng ngoài phạm vi rơi là BẮT BUỘC.",
+        "🎉 Chính xác! Không được đứng dưới tải trọng đang nâng.",
+        "❌ Sai rồi. Duy trì liên lạc là hành động NÊN làm."
+    ]
+}
+];
+
+let index = 0;
+
+function loadQuestion() {
+    const q = questions[index];
+    document.getElementById("question").innerText = q.question;
+    document.getElementById("image").src = q.image;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    q.options.forEach((opt, i) => {
+        const div = document.createElement("div");
+        div.className = "option";
+        div.innerText = opt;
+        div.onclick = () => checkAnswer(div, i);
+        optionsDiv.appendChild(div);
+    });
+}
+
+function checkAnswer(div, i) {
+    const q = questions[index];
+    if (i === q.correct) { div.classList.add("correct"); }
+    else { div.classList.add("wrong"); }
+
+    document.querySelectorAll(".option").forEach(o => o.onclick = null);
+
+    alert(q.feedback[i]); // hiển thị feedback
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+function nextQuestion() {
+    index++;
+    if (index >= questions.length) {
+        alert("Bạn đã hoàn thành tất cả câu hỏi!");
+        location.reload();
+        return;
+    }
+    document.getElementById("nextBtn").style.display = "none";
+    loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
